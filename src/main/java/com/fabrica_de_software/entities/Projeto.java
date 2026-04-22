@@ -48,7 +48,7 @@ public class Projeto {
 	private StatusProjeto status;
 	@Column(name = "tem_grupo", nullable = false)
 	private boolean temGrupo;
-	@OneToOne
+	@OneToOne(mappedBy = "projeto")
 	private Grupo grupo;
 
 	public Projeto() {
