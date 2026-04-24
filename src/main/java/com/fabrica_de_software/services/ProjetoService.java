@@ -19,7 +19,6 @@ import com.fabrica_de_software.notificacoes.ProfessorProducer;
 import com.fabrica_de_software.repositories.ProfessorRepository;
 import com.fabrica_de_software.repositories.ProjetoRepository;
 
-
 @Service
 public class ProjetoService {
 	private ProjetoRepository projetoRepository;
@@ -48,6 +47,15 @@ public class ProjetoService {
 
 	public List<ProjetoDTO> listarProjetos(StatusProjeto status) {
 		return projetoRepository.findByStatus(status).stream()
+				.map(p -> ProjetoDTO.builder().id(p.getId()).titulo(p.getTitulo()).objetivo(p.getObjetivo())
+						.perfilUsuarios(p.getPerfilUsuarios()).localUtilizacao(p.getLocalUtilizacao())
+						.funcionalidades(p.getFuncionalidades()).demanda(p.getDemanda()).dataInicio(p.getDataInicio())
+						.professorResponsavel(new ProfessorDTO(p.getProfessor())).temGrupo(p.isTemGrupo()).build())
+				.toList();
+	}
+
+	public List<ProjetoDTO> listarProjetosProfessor(long professorid) {
+		return projetoRepository.findById(professorid).stream()
 				.map(p -> ProjetoDTO.builder().id(p.getId()).titulo(p.getTitulo()).objetivo(p.getObjetivo())
 						.perfilUsuarios(p.getPerfilUsuarios()).localUtilizacao(p.getLocalUtilizacao())
 						.funcionalidades(p.getFuncionalidades()).demanda(p.getDemanda()).dataInicio(p.getDataInicio())

@@ -40,6 +40,12 @@ public class ProjetoController {
 		List<ProjetoDTO> projetos = projetoService.listarProjetos(status);
 		return ResponseEntity.ok(projetos);
 	}
+	
+	@GetMapping("/professor")
+	public ResponseEntity<List<ProjetoDTO>> listarProjetosProfessor(@RequestParam long professorId) {
+		List<ProjetoDTO> projetos = projetoService.listarProjetosProfessor(professorId);
+		return ResponseEntity.ok(projetos);
+	}
 
 	@PatchMapping("/status")
 	public ResponseEntity<MensagemDTO> atualizarStatus(@RequestBody StatusProjetoDTO dto) {
