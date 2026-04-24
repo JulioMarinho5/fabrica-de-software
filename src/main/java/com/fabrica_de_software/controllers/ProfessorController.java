@@ -32,7 +32,7 @@ public class ProfessorController {
 		return ResponseEntity.ok(data);
 	}
 
-	@GetMapping("/login")
+	@PostMapping("/login")
 	public ResponseEntity<ProfessorDTO> loginProfessor(@Valid @RequestBody LoginProfessorDTO dto) {
 		ProfessorDTO data = professorService.loginProfessor(dto);
 		return ResponseEntity.ok(data);
