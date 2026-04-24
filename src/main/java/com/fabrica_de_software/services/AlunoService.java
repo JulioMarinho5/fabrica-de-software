@@ -49,9 +49,11 @@ public class AlunoService {
 
 	public List<AlunoDTO> listarAlunosDisponiveis() {
 		List<Aluno> alunos = alunoRepository.findByGrupoIdIsNull();
-		return alunos.stream()
-				.map(a -> new AlunoDTO(a))
-				.toList();
+		return alunos.stream().map(a -> new AlunoDTO(a)).toList();
+	}
+
+	public List<AlunoDTO> listarTodosOsAlunos() {
+		return alunoRepository.findAll().stream().map(a -> new AlunoDTO(a)).toList();
 	}
 
 }

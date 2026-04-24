@@ -32,10 +32,16 @@ public class AlunoController {
 
 	}
 
-	@GetMapping("/lista")
+	@GetMapping("/disponiveis")
 	public ResponseEntity<List<AlunoDTO>> listarAlunosDisponiveis() {
 		List<AlunoDTO> alunosDisponiveis = alunoService.listarAlunosDisponiveis();
 		return ResponseEntity.ok(alunosDisponiveis);
+	}
+
+	@GetMapping("/todos")
+	public ResponseEntity<List<AlunoDTO>> listarTodosOsAlunos() {
+		List<AlunoDTO> alunos = alunoService.listarTodosOsAlunos();
+		return ResponseEntity.ok(alunos);
 	}
 
 }
