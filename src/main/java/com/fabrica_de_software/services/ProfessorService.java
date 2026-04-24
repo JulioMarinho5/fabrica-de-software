@@ -2,6 +2,7 @@ package com.fabrica_de_software.services;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -64,6 +65,10 @@ public class ProfessorService {
 			}
 			return new ProfessorDTO(p);
 		}).orElseThrow(() -> new ProfessorNaoEncontradoException("Professor não encontrado!"));
+	}
+
+	public List<ProfessorDTO> listarProfessores() {
+		return professorRepository.findAll().stream().map(p -> new ProfessorDTO(p)).toList();
 	}
 
 }

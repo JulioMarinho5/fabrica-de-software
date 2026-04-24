@@ -1,5 +1,7 @@
 package com.fabrica_de_software.controllers;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,6 +36,12 @@ public class ProfessorController {
 	public ResponseEntity<ProfessorDTO> loginProfessor(@Valid @RequestBody LoginProfessorDTO dto) {
 		ProfessorDTO data = professorService.loginProfessor(dto);
 		return ResponseEntity.ok(data);
+	}
+
+	@GetMapping("/lista")
+	public ResponseEntity<List<ProfessorDTO>> listarProfessores() {
+		List<ProfessorDTO> lista = professorService.listarProfessores();
+		return ResponseEntity.ok(lista);
 	}
 
 }
