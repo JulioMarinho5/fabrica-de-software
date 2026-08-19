@@ -13,6 +13,7 @@ import com.fabrica_de_software.dtos.CadastroProfessorDTO;
 import com.fabrica_de_software.dtos.LoginProfessorDTO;
 import com.fabrica_de_software.dtos.MensagemDTO;
 import com.fabrica_de_software.dtos.ProfessorDTO;
+import com.fabrica_de_software.dtos.TokenLoginProfessorDTO;
 import com.fabrica_de_software.services.ProfessorService;
 
 import jakarta.validation.Valid;
@@ -33,8 +34,8 @@ public class ProfessorController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<ProfessorDTO> loginProfessor(@Valid @RequestBody LoginProfessorDTO dto) {
-		ProfessorDTO data = professorService.loginProfessor(dto);
+	public ResponseEntity<TokenLoginProfessorDTO> loginProfessor(@Valid @RequestBody LoginProfessorDTO dto) {
+		TokenLoginProfessorDTO data = professorService.loginProfessor(dto);
 		return ResponseEntity.ok(data);
 	}
 

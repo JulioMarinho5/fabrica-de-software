@@ -2,19 +2,23 @@ package com.fabrica_de_software.controleradvicer;
 
 import java.util.Map;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
 import com.fabrica_de_software.exceptions.AlunoJaCadastradoEmGrupoException;
 import com.fabrica_de_software.exceptions.AlunoJaCadastradoException;
 import com.fabrica_de_software.exceptions.AlunoNaoEncontradoException;
+import com.fabrica_de_software.exceptions.GithubUrlJaExistenteException;
+import com.fabrica_de_software.exceptions.LinkedinUrlJaExistenteException;
 import com.fabrica_de_software.exceptions.ProfessorJaCadastradoException;
 import com.fabrica_de_software.exceptions.ProfessorNaoEncontradoException;
 import com.fabrica_de_software.exceptions.ProjetoNaoEncontradoException;
 import com.fabrica_de_software.exceptions.SenhaIncorretaException;
 import com.fabrica_de_software.exceptions.TransacaoInvalidaException;
+
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -56,6 +60,26 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(AlunoJaCadastradoEmGrupoException.class)
 	public ResponseEntity<Map<String, String>> alunoJaCadastrado(AlunoJaCadastradoEmGrupoException ex) {
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("erro", ex.getMessage()));
+	}
+
+	@ExceptionHandler(BadCredentialsException.class)
+	public ResponseEntity<Map<String, String>> tokenInvalido(BadCredentialsException ex) {
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("erro", ex.getMessage()));
+	}
+
+	@ExceptionHandler(GithubUrlJaExistenteException.class)
+	public ResponseEntity<Map<String, String>> githubUrlInvalida(GithubUrlJaExistenteException ex) {
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("erro", ex.getMessage()));
+	}
+
+	@ExceptionHandler(LinkedinUrlJaExistenteException.class)
+	public ResponseEntity<Map<String, String>> linkedinUrlInvalida(LinkedinUrlJaExistenteException ex) {
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("erro", ex.getMessage()));
+	}
+
+	@ExceptionHandler(DataIntegrityViolationException.class)
+	public ResponseEntity<Map<String, String>> dadosDuplicados(DataIntegrityViolationException ex) {
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("erro", ex.getMessage()));
 	}
 

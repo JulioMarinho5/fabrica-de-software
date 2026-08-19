@@ -12,6 +12,7 @@ import com.fabrica_de_software.dtos.CadastroProfessorDTO;
 import com.fabrica_de_software.dtos.LoginProfessorDTO;
 import com.fabrica_de_software.dtos.MensagemDTO;
 import com.fabrica_de_software.dtos.ProfessorDTO;
+import com.fabrica_de_software.dtos.TokenLoginProfessorDTO;
 import com.fabrica_de_software.entities.Professor;
 import com.fabrica_de_software.enums.Status;
 import com.fabrica_de_software.exceptions.ProfessorJaCadastradoException;
@@ -26,13 +27,15 @@ public class ProfessorService {
 	private GeradorDeRaService geradorRa;
 	private ProfessorProducer professorProducer;
 	private PasswordEncoder passwordEncoder;
+	private JwtService jwtService;
 
 	public ProfessorService(ProfessorRepository professorRepository, GeradorDeRaService geradorRa,
-			ProfessorProducer professorProducer, PasswordEncoder passwordEncoder) {
+			ProfessorProducer professorProducer, PasswordEncoder passwordEncoder, JwtService jwtService) {
 		this.professorRepository = professorRepository;
 		this.geradorRa = geradorRa;
 		this.professorProducer = professorProducer;
 		this.passwordEncoder = passwordEncoder;
+		this.jwtService = jwtService;
 	}
 
 	public MensagemDTO cadastrarProfessor(CadastroProfessorDTO dto) {
@@ -58,12 +61,13 @@ public class ProfessorService {
 
 	}
 
-	public ProfessorDTO loginProfessor(LoginProfessorDTO dto) {
+	public TokenLoginProfessorDTO loginProfessor(LoginProfessorDTO dto) {
 		return professorRepository.findByEmail(dto.getEmail().toLowerCase()).map(p -> {
 			if (!passwordEncoder.matches(dto.getSenha(), p.getSenha())) {
 				throw new SenhaIncorretaException("Senha incorreta! Tente novamente");
 			}
-			return new ProfessorDTO(p);
+			String token = jwtService.gerarToken(p);
+			return new TokenLoginProfessorDTO(token, p.getNome(), p.getEmail(), p.getTelefone());
 		}).orElseThrow(() -> new ProfessorNaoEncontradoException("Professor não encontrado!"));
 	}
 

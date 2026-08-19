@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,8 +30,9 @@ public class ProjetoController {
 	}
 
 	@PostMapping("/envio")
-	public ResponseEntity<MensagemDTO> solicitarProjeto(@Valid @RequestBody SolicitacaoProjetoDTO dto) {
-		MensagemDTO data = projetoService.solicitarProjeto(dto);
+	public ResponseEntity<MensagemDTO> solicitarProjeto(@Valid @RequestBody SolicitacaoProjetoDTO dto,
+			@RequestHeader("Authorization") String token) {
+		MensagemDTO data = projetoService.solicitarProjeto(dto, token);
 		return ResponseEntity.ok(data);
 
 	}
@@ -40,10 +42,10 @@ public class ProjetoController {
 		List<ProjetoDTO> projetos = projetoService.listarProjetos(status);
 		return ResponseEntity.ok(projetos);
 	}
-	
+
 	@GetMapping("/professor")
-	public ResponseEntity<List<ProjetoDTO>> listarProjetosProfessor(@RequestParam long professorId) {
-		List<ProjetoDTO> projetos = projetoService.listarProjetosProfessor(professorId);
+	public ResponseEntity<List<ProjetoDTO>> listarProjetosProfessor(@RequestHeader("Authorization") String token) {
+		List<ProjetoDTO> projetos = projetoService.listarProjetosProfessor(token);
 		return ResponseEntity.ok(projetos);
 	}
 

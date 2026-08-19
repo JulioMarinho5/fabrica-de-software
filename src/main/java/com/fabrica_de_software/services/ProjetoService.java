@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+
 import com.fabrica_de_software.dtos.MensagemDTO;
 import com.fabrica_de_software.dtos.ProfessorDTO;
 import com.fabrica_de_software.dtos.ProjetoDTO;
@@ -19,23 +20,29 @@ import com.fabrica_de_software.notificacoes.ProfessorProducer;
 import com.fabrica_de_software.repositories.ProfessorRepository;
 import com.fabrica_de_software.repositories.ProjetoRepository;
 
+import io.jsonwebtoken.Claims;
+
 @Service
 public class ProjetoService {
 	private ProjetoRepository projetoRepository;
 	private ProfessorRepository professorRepository;
 	private ValidarStatusService validarStatusService;
 	private ProfessorProducer professorProducer;
+	private JwtService jwtService;
 
 	public ProjetoService(ProjetoRepository projetoRepository, ProfessorRepository professorRepository,
-			ValidarStatusService validarStatusService, ProfessorProducer professorProducer) {
+			ValidarStatusService validarStatusService, ProfessorProducer professorProducer, JwtService jwtService) {
 		this.projetoRepository = projetoRepository;
 		this.professorRepository = professorRepository;
 		this.validarStatusService = validarStatusService;
 		this.professorProducer = professorProducer;
+		this.jwtService = jwtService;
 	}
 
-	public MensagemDTO solicitarProjeto(SolicitacaoProjetoDTO dto) {
-		Professor professor = professorRepository.findById(dto.getProfessorResponsavelId())
+	public MensagemDTO solicitarProjeto(SolicitacaoProjetoDTO dto, String token) {
+		Claims claims = jwtService.validarToken(token);
+		long professorId = claims.get("professorId", Long.class);
+		Professor professor = professorRepository.findById(professorId)
 				.orElseThrow(() -> new ProfessorNaoEncontradoException("Professor não encontrado!"));
 		Projeto projeto = new Projeto(dto.getTitulo(), dto.getObjetivo(), dto.getPerfilUsuarios(),
 				dto.getLocalUtilizacao(), dto.getFuncionalidades(), dto.getDemanda(), dto.getDataInicio(), null,
@@ -54,8 +61,10 @@ public class ProjetoService {
 				.toList();
 	}
 
-	public List<ProjetoDTO> listarProjetosProfessor(long professorid) {
-		return projetoRepository.findById(professorid).stream()
+	public List<ProjetoDTO> listarProjetosProfessor(String token) {
+		Claims claims = jwtService.validarToken(token);
+		long professorId = claims.get("professorId", Long.class);
+		return projetoRepository.findByProfessorId(professorId).stream()
 				.map(p -> ProjetoDTO.builder().id(p.getId()).titulo(p.getTitulo()).objetivo(p.getObjetivo())
 						.perfilUsuarios(p.getPerfilUsuarios()).localUtilizacao(p.getLocalUtilizacao())
 						.funcionalidades(p.getFuncionalidades()).demanda(p.getDemanda()).dataInicio(p.getDataInicio())

@@ -11,6 +11,8 @@ import com.fabrica_de_software.enums.StatusProjeto;
 public interface ProjetoRepository extends JpaRepository<Projeto, Long> {
 	List<Projeto> findByStatus(StatusProjeto status);
 
+	List<Projeto> findByProfessorId(long professorId);
+
 	@Query("""
 			    SELECT p FROM Projeto p
 			    JOIN FETCH p.grupo g

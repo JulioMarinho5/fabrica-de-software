@@ -13,6 +13,8 @@ import com.fabrica_de_software.dtos.MensagemDTO;
 import com.fabrica_de_software.entities.Aluno;
 import com.fabrica_de_software.enums.Status;
 import com.fabrica_de_software.exceptions.AlunoJaCadastradoException;
+import com.fabrica_de_software.exceptions.GithubUrlJaExistenteException;
+import com.fabrica_de_software.exceptions.LinkedinUrlJaExistenteException;
 import com.fabrica_de_software.repositories.AlunoRepository;
 
 @Service
@@ -30,6 +32,12 @@ public class AlunoService {
 		if (op.isPresent()) {
 			throw new AlunoJaCadastradoException("Um aluno com esse Email já está cadastrado");
 		}
+		if (alunoRepository.existsByGithubUrl(dto.getGithubUrl().toLowerCase().trim())) {
+			throw new GithubUrlJaExistenteException("Essa URL do Github já está em uso!");
+		}
+		if (alunoRepository.existsByLinkedinUrl(dto.getLinkedinUrl().toLowerCase().trim())) {
+			throw new LinkedinUrlJaExistenteException("Essa URL do Linkedin já está em uso!");
+		}
 		boolean isOk = false;
 		String ra = null;
 		while (!isOk) {
@@ -41,8 +49,8 @@ public class AlunoService {
 			}
 		}
 		Aluno aluno = new Aluno(ra, dto.getNome(), dto.getEmail().toLowerCase(), dto.getTelefone(), dto.getCurso(),
-				dto.getTurno(), dto.getHorasSemanais(), dto.getGithubUrl(), dto.getLinkedinUrl(), dto.getDataSelecao(),
-				LocalDate.now(), null, Status.ATIVO);
+				dto.getTurno(), dto.getHorasSemanais(), dto.getGithubUrl().toLowerCase().trim(),
+				dto.getLinkedinUrl().toLowerCase().trim(), dto.getDataSelecao(), LocalDate.now(), null, Status.ATIVO);
 		alunoRepository.save(aluno);
 		return new MensagemDTO("Aluno cadastrado com sucesso!", LocalDateTime.now());
 	}

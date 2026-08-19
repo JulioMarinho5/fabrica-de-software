@@ -28,12 +28,6 @@ public class Aluno {
 	@Column(nullable = false, unique = true, columnDefinition = "CHAR(6)")
 	private String ra;
 	@Column(nullable = false, length = 150)
-	private String nome;
-	@Column(nullable = false, length = 150, unique = true)
-	private String email;
-	@Column(nullable = false, unique = true, columnDefinition = "CHAR(11)")
-	private String telefone;
-	@Column(nullable = false, length = 150)
 	private String curso;
 	@Column(nullable = false, length = 10)
 	@Enumerated(EnumType.STRING)
@@ -64,13 +58,9 @@ public class Aluno {
 	public Aluno() {
 	}
 
-	public Aluno(String ra, String nome, String email, String telefone, String curso, Turno turno, int horasSemanais,
-			String githubUrl, String linkedinUrl, LocalDate dataSelecao, LocalDate dataCadastro, Grupo grupo,
-			Status status) {
+	public Aluno(String ra, String curso, Turno turno, int horasSemanais, String githubUrl, String linkedinUrl,
+			LocalDate dataSelecao, LocalDate dataCadastro, Grupo grupo, Status status) {
 		this.ra = ra;
-		this.nome = nome;
-		this.email = email;
-		this.telefone = telefone;
 		this.curso = curso;
 		this.turno = turno;
 		this.horasSemanais = horasSemanais;
@@ -96,30 +86,6 @@ public class Aluno {
 
 	public void setRa(String ra) {
 		this.ra = ra;
-	}
-
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getTelefone() {
-		return telefone;
-	}
-
-	public void setTelefone(String telefone) {
-		this.telefone = telefone;
 	}
 
 	public String getCurso() {

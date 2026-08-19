@@ -10,14 +10,13 @@ public class SolicitacaoProjetoDTO {
 	private String funcionalidades;
 	private String demanda;
 	private LocalDate dataInicio;
-	private long professorResponsavelId;
 
 	public SolicitacaoProjetoDTO() {
 
 	}
 
 	public SolicitacaoProjetoDTO(String titulo, String objetivo, String perfilUsuarios, String localUtilizacao,
-			String funcionalidades, String demanda, LocalDate dataInicio, long professorResponsavelId) {
+			String funcionalidades, String demanda, LocalDate dataInicio) {
 		this.titulo = titulo;
 		this.objetivo = objetivo;
 		this.perfilUsuarios = perfilUsuarios;
@@ -25,7 +24,6 @@ public class SolicitacaoProjetoDTO {
 		this.funcionalidades = funcionalidades;
 		this.demanda = demanda;
 		this.dataInicio = dataInicio;
-		this.professorResponsavelId = professorResponsavelId;
 	}
 
 	public String getTitulo() {
@@ -82,14 +80,6 @@ public class SolicitacaoProjetoDTO {
 
 	public void setDataInicio(LocalDate dataInicio) {
 		this.dataInicio = dataInicio;
-	}
-
-	public long getProfessorResponsavelId() {
-		return professorResponsavelId;
-	}
-
-	public void setProfessorResponsavelId(long professorResponsavelId) {
-		this.professorResponsavelId = professorResponsavelId;
 	}
 
 }

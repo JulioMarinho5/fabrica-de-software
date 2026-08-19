@@ -16,4 +16,8 @@ public interface AlunoRepository extends JpaRepository<Aluno, Long> {
 
 	List<Aluno> findByGrupoId(long grupoId);
 
+	boolean existsByGithubUrl(String githubUrl);
+
+	boolean existsByLinkedinUrl(String LinkedinUrl);
+
 }

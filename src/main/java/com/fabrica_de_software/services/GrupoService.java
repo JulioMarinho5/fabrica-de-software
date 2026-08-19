@@ -27,6 +27,8 @@ import com.fabrica_de_software.repositories.GrupoRepository;
 import com.fabrica_de_software.repositories.ProfessorRepository;
 import com.fabrica_de_software.repositories.ProjetoRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class GrupoService {
 	private GrupoRepository grupoRepository;
@@ -71,7 +73,8 @@ public class GrupoService {
 				alunosDoGrupo.stream().map(a -> new AlunoDTO(a)).toList());
 		return new MensagemDTO("Grupo criado com sucesso!", LocalDateTime.now());
 	}
-
+	
+	@Transactional
 	public List<GrupoDTO> listarGrupos() {
 		return grupoRepository.findAllCompleto().stream().map(g -> new GrupoDTO(g.getId(),
 				ProjetoDTO.builder().id(g.getProjeto().getId()).titulo(g.getProjeto().getTitulo())
