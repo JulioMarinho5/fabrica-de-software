@@ -2,7 +2,7 @@ package com.fabrica_de_software.dtos;
 
 import java.time.LocalDate;
 
-public class ProjetoDTO {
+public class ProjetoResponseDto {
 	private long id;
 	private String titulo;
 	private String objetivo;
@@ -11,13 +11,13 @@ public class ProjetoDTO {
 	private String funcionalidades;
 	private String demanda;
 	private LocalDate dataInicio;
-	private ProfessorDTO professorResponsavel;
+	private ProfessorResponseDto professorResponsavel;
 	private boolean temGrupo;
 
-	public ProjetoDTO() {
+	public ProjetoResponseDto() {
 	}
 
-	private ProjetoDTO(Builder b) {
+	private ProjetoResponseDto(Builder b) {
 		this.id = b.id;
 		this.titulo = b.titulo;
 		this.objetivo = b.objetivo;
@@ -62,7 +62,7 @@ public class ProjetoDTO {
 		return dataInicio;
 	}
 
-	public ProfessorDTO getProfessorResponsavel() {
+	public ProfessorResponseDto getProfessorResponsavel() {
 		return professorResponsavel;
 	}
 
@@ -83,7 +83,7 @@ public class ProjetoDTO {
 		private String funcionalidades;
 		private String demanda;
 		private LocalDate dataInicio;
-		private ProfessorDTO professorResponsavel;
+		private ProfessorResponseDto professorResponsavel;
 		private boolean temGrupo;
 
 		public Builder() {
@@ -129,7 +129,7 @@ public class ProjetoDTO {
 			return this;
 		}
 
-		public Builder professorResponsavel(ProfessorDTO professorResponsavel) {
+		public Builder professorResponsavel(ProfessorResponseDto professorResponsavel) {
 			this.professorResponsavel = professorResponsavel;
 			return this;
 		}
@@ -139,8 +139,8 @@ public class ProjetoDTO {
 			return this;
 		}
 
-		public ProjetoDTO build() {
-			return new ProjetoDTO(this);
+		public ProjetoResponseDto build() {
+			return new ProjetoResponseDto(this);
 		}
 
 	}

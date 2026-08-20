@@ -2,11 +2,14 @@ package com.fabrica_de_software.services;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import com.fabrica_de_software.config.UserDetailsImpl;
+import com.fabrica_de_software.entities.Role;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -22,10 +25,10 @@ public class JwtService {
 	private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
 
 	public String gerarToken(UserDetailsImpl userDetails) {
-		String role = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).findFirst()
-				.orElse("USER");
+		List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+				.collect(Collectors.toList());
 		return Jwts.builder().setSubject(userDetails.getUsername()).claim("user_id", userDetails.getUsuarioId())
-				.claim("role", role).setIssuedAt(new Date())
+				.claim("roles", roles).setIssuedAt(new Date())
 				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1h
 				.signWith(key, SignatureAlgorithm.HS256).compact();
 	}
@@ -39,9 +42,9 @@ public class JwtService {
 		return claims.get("user_id", Long.class);
 	}
 
-	public String getRole(String token) {
+	public List<Role> getRoles(String token) {
 		Claims claims = validarToken(token);
-		return claims.get("role", String.class);
+		return claims.get("roles", List.class);
 	}
 
 	public String getUsername(String token) {

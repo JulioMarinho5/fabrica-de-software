@@ -1,21 +1,23 @@
 package com.fabrica_de_software.dtos;
 
 import com.fabrica_de_software.entities.Professor;
+import com.fabrica_de_software.entities.Usuario;
 
-public class ProfessorDTO {
+public class ProfessorResponseDto {
 	private long id;
 	private String nome;
 	private String email;
 	private String telefone;
 
-	public ProfessorDTO() {
+	public ProfessorResponseDto() {
+
 	}
 
-	public ProfessorDTO(Professor professor) {
+	public ProfessorResponseDto(Professor professor, Usuario usuario) {
 		this.id = professor.getId();
-		this.nome = professor.getNome();
-		this.email = professor.getEmail();
-		this.telefone = professor.getTelefone();
+		this.nome = usuario.getNome();
+		this.email = usuario.getEmail();
+		this.telefone = usuario.getTelefone();
 	}
 
 	public long getId() {

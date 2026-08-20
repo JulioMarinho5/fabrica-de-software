@@ -1,6 +1,6 @@
 package com.fabrica_de_software.services;
 
-import com.fabrica_de_software.dtos.EmailDTO;
+import com.fabrica_de_software.dtos.EmailDto;
 
 public interface Notificador {
 	public void enviarEmailEmAnalise(String emailProfessor);
@@ -9,8 +9,8 @@ public interface Notificador {
 
 	public void enviarEmailCancelamento(String emailProfessor);
 
-	public void enviarEmailCadastro(EmailDTO dto);
+	public void enviarEmailCadastro(EmailDto dto);
 
-	public void enviarEmailNovoGrupo(EmailDTO dto);
+	public void enviarEmailNovoGrupo(EmailDto dto);
 
 }

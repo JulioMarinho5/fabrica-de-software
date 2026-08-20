@@ -17,6 +17,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -48,6 +49,9 @@ public class Aluno {
 	@Column(nullable = true, length = 20)
 	@Enumerated(EnumType.STRING)
 	private Status status;
+	@OneToOne
+	@JoinColumn(name = "usuario_id", nullable = false)
+	private Usuario usuario;
 	@ManyToMany
 	@JoinTable(name = "areas_interesse_alunos", joinColumns = @JoinColumn(name = "aluno_id"), inverseJoinColumns = @JoinColumn(name = "area_id"))
 	private Set<Area> areas;
@@ -59,7 +63,7 @@ public class Aluno {
 	}
 
 	public Aluno(String ra, String curso, Turno turno, int horasSemanais, String githubUrl, String linkedinUrl,
-			LocalDate dataSelecao, LocalDate dataCadastro, Grupo grupo, Status status) {
+			LocalDate dataSelecao, LocalDate dataCadastro, Grupo grupo, Status status, Usuario usuario) {
 		this.ra = ra;
 		this.curso = curso;
 		this.turno = turno;
@@ -70,6 +74,7 @@ public class Aluno {
 		this.dataCadastro = dataCadastro;
 		this.grupo = grupo;
 		this.status = status;
+		this.usuario = usuario;
 	}
 
 	public long getId() {
@@ -174,6 +179,14 @@ public class Aluno {
 
 	public void setDisciplinas(Set<Disciplina> disciplinas) {
 		this.disciplinas = disciplinas;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 
 }

@@ -1,7 +1,5 @@
 package com.fabrica_de_software.entities;
 
-import java.time.LocalDate;
-
 import com.fabrica_de_software.enums.Status;
 
 import jakarta.persistence.Column;
@@ -16,17 +14,11 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "professores")
-public class Professor {
+@Table(name = "administradores")
+public class Administrador {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	@Column(nullable = false, unique = true, columnDefinition = "CHAR(5)")
-	private String ra;
-	@Column(nullable = false, length = 150)
-	private String escola;
-	@Column(nullable = false, name = "data_cadastro")
-	private LocalDate dataCadastro;
 	@OneToOne
 	@JoinColumn(name = "usuario_id", nullable = false)
 	private Usuario usuario;
@@ -34,13 +26,12 @@ public class Professor {
 	@Enumerated(EnumType.STRING)
 	private Status status;
 
-	public Professor() {
+	public Administrador() {
+		super();
 	}
 
-	public Professor(String ra, String escola, LocalDate dataCadastro, Usuario usuario, Status status) {
-		this.ra = ra;
-		this.escola = escola;
-		this.dataCadastro = dataCadastro;
+	public Administrador(Usuario usuario, Status status) {
+		super();
 		this.usuario = usuario;
 		this.status = status;
 	}
@@ -51,30 +42,6 @@ public class Professor {
 
 	public void setId(long id) {
 		this.id = id;
-	}
-
-	public String getRa() {
-		return ra;
-	}
-
-	public void setRa(String ra) {
-		this.ra = ra;
-	}
-
-	public String getEscola() {
-		return escola;
-	}
-
-	public void setEscola(String escola) {
-		this.escola = escola;
-	}
-
-	public LocalDate getDataCadastro() {
-		return dataCadastro;
-	}
-
-	public void setDataCadastro(LocalDate dataCadastro) {
-		this.dataCadastro = dataCadastro;
 	}
 
 	public Usuario getUsuario() {

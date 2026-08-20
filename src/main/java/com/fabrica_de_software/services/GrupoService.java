@@ -3,15 +3,13 @@ package com.fabrica_de_software.services;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-
 import org.springframework.stereotype.Service;
-
-import com.fabrica_de_software.dtos.AlunoDTO;
-import com.fabrica_de_software.dtos.CadastroGrupoDTO;
-import com.fabrica_de_software.dtos.GrupoDTO;
-import com.fabrica_de_software.dtos.MensagemDTO;
-import com.fabrica_de_software.dtos.ProfessorDTO;
-import com.fabrica_de_software.dtos.ProjetoDTO;
+import com.fabrica_de_software.dtos.AlunoResponseDto;
+import com.fabrica_de_software.dtos.CadastroGrupoRequestDto;
+import com.fabrica_de_software.dtos.GrupoResponseDto;
+import com.fabrica_de_software.dtos.MensagemResponseDto;
+import com.fabrica_de_software.dtos.ProfessorResponseDto;
+import com.fabrica_de_software.dtos.ProjetoResponseDto;
 import com.fabrica_de_software.entities.Aluno;
 import com.fabrica_de_software.entities.Grupo;
 import com.fabrica_de_software.entities.Professor;
@@ -47,13 +45,13 @@ public class GrupoService {
 		this.professorProducer = professorProducer;
 	}
 
-	public MensagemDTO criarNovoGrupo(CadastroGrupoDTO dto) {
-		Projeto projeto = projetoRepository.findById(dto.getProjetoId())
+	public MensagemResponseDto criarNovoGrupo(CadastroGrupoRequestDto dto) {
+		Projeto projeto = projetoRepository.findById(dto.projetoId())
 				.orElseThrow(() -> new ProjetoNaoEncontradoException("Projeto não encontrado!"));
-		Professor professor = professorRepository.findByEmail(dto.getProfessorCoordenadorEmail().toLowerCase())
+		Professor professor = professorRepository.findByEmail(dto.professorCoordenadorEmail().toLowerCase())
 				.orElseThrow(() -> new ProfessorNaoEncontradoException("Professor não encontrado!"));
-		List<Aluno> alunosDoGrupo = alunoRepository.findAllById(dto.getAlunosIds());
-		if (alunosDoGrupo.size() != dto.getAlunosIds().size()) {
+		List<Aluno> alunosDoGrupo = alunoRepository.findAllById(dto.alunosIds());
+		if (alunosDoGrupo.size() != dto.alunosIds().size()) {
 			throw new AlunoNaoEncontradoException("Um ou mais alunos informados não foram encontrados!");
 		}
 		for (Aluno a : alunosDoGrupo) {
@@ -70,21 +68,22 @@ public class GrupoService {
 		projeto.setTemGrupo(true);
 		projetoRepository.save(projeto);
 		professorProducer.enviarEmailGrupo(professor.getEmail(),
-				alunosDoGrupo.stream().map(a -> new AlunoDTO(a)).toList());
-		return new MensagemDTO("Grupo criado com sucesso!", LocalDateTime.now());
+				alunosDoGrupo.stream().map(a -> new AlunoResponseDto(a)).toList());
+		return new MensagemResponseDto("Grupo criado com sucesso!", LocalDateTime.now());
 	}
-	
+
 	@Transactional
-	public List<GrupoDTO> listarGrupos() {
-		return grupoRepository.findAllCompleto().stream().map(g -> new GrupoDTO(g.getId(),
-				ProjetoDTO.builder().id(g.getProjeto().getId()).titulo(g.getProjeto().getTitulo())
+	public List<GrupoResponseDto> listarGrupos() {
+		return grupoRepository.findAllCompleto().stream().map(g -> new GrupoResponseDto(g.getId(),
+				ProjetoResponseDto.builder().id(g.getProjeto().getId()).titulo(g.getProjeto().getTitulo())
 						.objetivo(g.getProjeto().getObjetivo()).perfilUsuarios(g.getProjeto().getPerfilUsuarios())
 						.localUtilizacao(g.getProjeto().getLocalUtilizacao())
 						.funcionalidades(g.getProjeto().getFuncionalidades()).demanda(g.getProjeto().getDemanda())
 						.dataInicio(g.getProjeto().getDataInicio())
-						.professorResponsavel(new ProfessorDTO(g.getProjeto().getProfessor()))
+						.professorResponsavel(new ProfessorResponseDto(g.getProjeto().getProfessor()))
 						.temGrupo(g.getProjeto().isTemGrupo()).build(),
-				new ProfessorDTO(g.getProfessor()), g.getAlunos().stream().map(AlunoDTO::new).toList())).toList();
+				new ProfessorResponseDto(g.getProfessor()), g.getAlunos().stream().map(AlunoResponseDto::new).toList()))
+				.toList();
 	}
 
 }

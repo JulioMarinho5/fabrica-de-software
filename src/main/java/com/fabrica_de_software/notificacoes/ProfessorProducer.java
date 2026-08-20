@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
-import com.fabrica_de_software.dtos.AlunoDTO;
-import com.fabrica_de_software.dtos.EmailDTO;
+import com.fabrica_de_software.dtos.AlunoResponseDto;
+import com.fabrica_de_software.dtos.EmailDto;
 
 @Service
 public class ProfessorProducer {
@@ -17,23 +17,23 @@ public class ProfessorProducer {
 	}
 
 	public void enviarEmailEmAnalise(String emailProfessor) {
-		rabbitTemplate.convertAndSend("fila.email", new EmailDTO(emailProfessor, null, "ANALISE", null));
+		rabbitTemplate.convertAndSend("fila.email", new EmailDto(emailProfessor, null, "ANALISE", null));
 	}
 
 	public void enviarEmailAprovacao(String emailProfessor) {
-		rabbitTemplate.convertAndSend("fila.email", new EmailDTO(emailProfessor, null, "APROVACAO", null));
+		rabbitTemplate.convertAndSend("fila.email", new EmailDto(emailProfessor, null, "APROVACAO", null));
 	}
 
 	public void enviarEmailCancelamento(String emailProfessor) {
-		rabbitTemplate.convertAndSend("fila.email", new EmailDTO(emailProfessor, null, "CANCELAMENTO", null));
+		rabbitTemplate.convertAndSend("fila.email", new EmailDto(emailProfessor, null, "CANCELAMENTO", null));
 	}
 
 	public void enviarEmailCadastro(String emailProfessor, String ra) {
-		rabbitTemplate.convertAndSend("fila.email", new EmailDTO(emailProfessor, ra, "CADASTRO", null));
+		rabbitTemplate.convertAndSend("fila.email", new EmailDto(emailProfessor, ra, "CADASTRO", null));
 	}
 
-	public void enviarEmailGrupo(String emailProfessor, List<AlunoDTO> alunos) {
-		rabbitTemplate.convertAndSend("fila.email", new EmailDTO(emailProfessor, null, "GRUPO_CRIADO", alunos));
+	public void enviarEmailGrupo(String emailProfessor, List<AlunoResponseDto> alunos) {
+		rabbitTemplate.convertAndSend("fila.email", new EmailDto(emailProfessor, null, "GRUPO_CRIADO", alunos));
 	}
 
 }

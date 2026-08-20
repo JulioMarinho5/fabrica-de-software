@@ -10,10 +10,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fabrica_de_software.dtos.CadastroProfessorDTO;
+import com.fabrica_de_software.dtos.CadastroProfessorRequestDto;
 import com.fabrica_de_software.dtos.LoginProfessorDTO;
+import com.fabrica_de_software.dtos.LoginRequestDto;
+import com.fabrica_de_software.dtos.LoginResponseDto;
 import com.fabrica_de_software.dtos.MensagemDTO;
+import com.fabrica_de_software.dtos.MensagemResponseDto;
 import com.fabrica_de_software.dtos.ProfessorDTO;
-import com.fabrica_de_software.dtos.TokenLoginProfessorDTO;
+import com.fabrica_de_software.dtos.ProfessorResponseDto;
+import com.fabrica_de_software.dtos.TokenLoginDTO;
 import com.fabrica_de_software.services.ProfessorService;
 
 import jakarta.validation.Valid;
@@ -28,20 +33,20 @@ public class ProfessorController {
 	}
 
 	@PostMapping("/cadastro")
-	public ResponseEntity<MensagemDTO> cadastrarProfessor(@Valid @RequestBody CadastroProfessorDTO dto) {
-		MensagemDTO data = professorService.cadastrarProfessor(dto);
+	public ResponseEntity<MensagemResponseDto> cadastrarProfessor(@Valid @RequestBody CadastroProfessorRequestDto dto) {
+		MensagemResponseDto data = professorService.cadastrarProfessor(dto);
 		return ResponseEntity.ok(data);
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<TokenLoginProfessorDTO> loginProfessor(@Valid @RequestBody LoginProfessorDTO dto) {
-		TokenLoginProfessorDTO data = professorService.loginProfessor(dto);
+	public ResponseEntity<LoginResponseDto> loginProfessor(@Valid @RequestBody LoginRequestDto dto) {
+		LoginResponseDto data = professorService.loginProfessor(dto);
 		return ResponseEntity.ok(data);
 	}
 
 	@GetMapping("/lista")
-	public ResponseEntity<List<ProfessorDTO>> listarProfessores() {
-		List<ProfessorDTO> lista = professorService.listarProfessores();
+	public ResponseEntity<List<ProfessorResponseDto>> listarProfessores() {
+		List<ProfessorResponseDto> lista = professorService.listarProfessores();
 		return ResponseEntity.ok(lista);
 	}
 

@@ -9,8 +9,9 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.fabrica_de_software.entities.Role;
 import com.fabrica_de_software.entities.Usuario;
-import com.fabrica_de_software.exceptions.ProfessorNaoEncontradoException;
+import com.fabrica_de_software.exceptions.UsuarioNaoEncontradoException;
 import com.fabrica_de_software.repositories.UsuarioRepository;
 import com.fabrica_de_software.services.JwtService;
 
@@ -41,13 +42,13 @@ public class JwtFilter extends OncePerRequestFilter {
 			try {
 				Claims claims = jwtService.validarToken(token);
 				Long userId = claims.get("user_id", Long.class);
-				String role = claims.get("role", String.class); // Ou List<Role>
+				List<String> roles = claims.get("roles", List.class); // List<String>
 				String email = claims.getSubject();
 				Usuario u = usuarioRepository.findByEmail(email)
-						.orElseThrow(() -> new ProfessorNaoEncontradoException("Professor não encontrado!"));
+						.orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado!"));
 				UserDetailsImpl userDetails = new UserDetailsImpl(u);
 				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-						userDetails, null, List.of(new SimpleGrantedAuthority(role)));
+						userDetails, null, roles.stream().map(r -> new SimpleGrantedAuthority(r)).toList());
 				authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 				SecurityContextHolder.getContext().setAuthentication(authentication);
 				request.setAttribute("user_id", userId);
@@ -55,16 +56,11 @@ public class JwtFilter extends OncePerRequestFilter {
 				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 				response.setContentType("application/json");
 				response.setCharacterEncoding("UTF-8");
-				try {
-					response.getWriter().write("""
-							 		{
-							   	"erro": "Token inválido ou expirado"
-									}
-							""");
-				} catch (java.io.IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				response.getWriter().write("""
+						 		{
+						   	"erro": "Token inválido ou expirado"
+								}
+						""");
 
 				return;
 			}

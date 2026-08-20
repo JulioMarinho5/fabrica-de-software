@@ -3,14 +3,12 @@ package com.fabrica_de_software.services;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-
 import org.springframework.stereotype.Service;
-
-import com.fabrica_de_software.dtos.MensagemDTO;
-import com.fabrica_de_software.dtos.ProfessorDTO;
-import com.fabrica_de_software.dtos.ProjetoDTO;
-import com.fabrica_de_software.dtos.SolicitacaoProjetoDTO;
-import com.fabrica_de_software.dtos.StatusProjetoDTO;
+import com.fabrica_de_software.dtos.MensagemResponseDto;
+import com.fabrica_de_software.dtos.ProfessorResponseDto;
+import com.fabrica_de_software.dtos.ProjetoResponseDto;
+import com.fabrica_de_software.dtos.SolicitacaoProjetoRequestDto;
+import com.fabrica_de_software.dtos.StatusProjetoRequestDto;
 import com.fabrica_de_software.entities.Professor;
 import com.fabrica_de_software.entities.Projeto;
 import com.fabrica_de_software.enums.StatusProjeto;
@@ -39,46 +37,48 @@ public class ProjetoService {
 		this.jwtService = jwtService;
 	}
 
-	public MensagemDTO solicitarProjeto(SolicitacaoProjetoDTO dto, String token) {
+	public MensagemResponseDto solicitarProjeto(SolicitacaoProjetoRequestDto dto, String token) {
 		Claims claims = jwtService.validarToken(token);
 		long professorId = claims.get("professorId", Long.class);
 		Professor professor = professorRepository.findById(professorId)
 				.orElseThrow(() -> new ProfessorNaoEncontradoException("Professor não encontrado!"));
-		Projeto projeto = new Projeto(dto.getTitulo(), dto.getObjetivo(), dto.getPerfilUsuarios(),
-				dto.getLocalUtilizacao(), dto.getFuncionalidades(), dto.getDemanda(), dto.getDataInicio(), null,
-				professor, StatusProjeto.SOLICITADO, false);
+		Projeto projeto = new Projeto(dto.titulo(), dto.objetivo(), dto.perfilUsuarios(), dto.localUtilizacao(),
+				dto.funcionalidades(), dto.demanda(), dto.dataInicio(), null, professor, StatusProjeto.SOLICITADO,
+				false);
 		projetoRepository.save(projeto);
-		return new MensagemDTO("Projeto solicitado com sucesso!", LocalDateTime.now());
+		return new MensagemResponseDto("Projeto solicitado com sucesso!", LocalDateTime.now());
 
 	}
 
-	public List<ProjetoDTO> listarProjetos(StatusProjeto status) {
+	public List<ProjetoResponseDto> listarProjetos(StatusProjeto status) {
 		return projetoRepository.findByStatus(status).stream()
-				.map(p -> ProjetoDTO.builder().id(p.getId()).titulo(p.getTitulo()).objetivo(p.getObjetivo())
+				.map(p -> ProjetoResponseDto.builder().id(p.getId()).titulo(p.getTitulo()).objetivo(p.getObjetivo())
 						.perfilUsuarios(p.getPerfilUsuarios()).localUtilizacao(p.getLocalUtilizacao())
 						.funcionalidades(p.getFuncionalidades()).demanda(p.getDemanda()).dataInicio(p.getDataInicio())
-						.professorResponsavel(new ProfessorDTO(p.getProfessor())).temGrupo(p.isTemGrupo()).build())
+						.professorResponsavel(new ProfessorResponseDto(p.getProfessor(), null)).temGrupo(p.isTemGrupo())
+						.build())
 				.toList();
 	}
 
-	public List<ProjetoDTO> listarProjetosProfessor(String token) {
+	public List<ProjetoResponseDto> listarProjetosProfessor(String token) {
 		Claims claims = jwtService.validarToken(token);
 		long professorId = claims.get("professorId", Long.class);
 		return projetoRepository.findByProfessorId(professorId).stream()
-				.map(p -> ProjetoDTO.builder().id(p.getId()).titulo(p.getTitulo()).objetivo(p.getObjetivo())
+				.map(p -> ProjetoResponseDto.builder().id(p.getId()).titulo(p.getTitulo()).objetivo(p.getObjetivo())
 						.perfilUsuarios(p.getPerfilUsuarios()).localUtilizacao(p.getLocalUtilizacao())
 						.funcionalidades(p.getFuncionalidades()).demanda(p.getDemanda()).dataInicio(p.getDataInicio())
-						.professorResponsavel(new ProfessorDTO(p.getProfessor())).temGrupo(p.isTemGrupo()).build())
+						.professorResponsavel(new ProfessorResponseDto(p.getProfessor(), null)).temGrupo(p.isTemGrupo())
+						.build())
 				.toList();
 	}
 
-	public MensagemDTO atualizarStatus(StatusProjetoDTO dto) {
-		Projeto projeto = projetoRepository.findById(dto.getProjetoId())
+	public MensagemResponseDto atualizarStatus(StatusProjetoRequestDto dto) {
+		Projeto projeto = projetoRepository.findById(dto.projetoId())
 				.orElseThrow(() -> new ProjetoNaoEncontradoException("Projeto não encontrado!"));
 		StatusProjeto atual = projeto.getStatus();
-		StatusProjeto novo = dto.getStatus();
+		StatusProjeto novo = dto.status();
 		validarStatusService.ValidarTransacao(atual, novo);
-		switch (dto.getStatus()) {
+		switch (dto.status()) {
 		case EM_ANALISE:
 			projeto.setStatus(StatusProjeto.EM_ANALISE);
 			professorProducer.enviarEmailEmAnalise(projeto.getProfessor().getEmail());
@@ -94,7 +94,7 @@ public class ProjetoService {
 			break;
 		}
 		projetoRepository.save(projeto);
-		return new MensagemDTO("Projeto atualizado com sucesso!", LocalDateTime.now());
+		return new MensagemResponseDto("Projeto atualizado com sucesso!", LocalDateTime.now());
 	}
 
 }

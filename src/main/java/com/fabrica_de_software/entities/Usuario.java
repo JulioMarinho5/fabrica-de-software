@@ -2,8 +2,6 @@ package com.fabrica_de_software.entities;
 
 import java.util.List;
 
-import com.fabrica_de_software.enums.Role;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

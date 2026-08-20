@@ -12,8 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.fabrica_de_software.dtos.MensagemDTO;
+import com.fabrica_de_software.dtos.MensagemResponseDto;
 import com.fabrica_de_software.dtos.ProjetoDTO;
+import com.fabrica_de_software.dtos.ProjetoResponseDto;
 import com.fabrica_de_software.dtos.SolicitacaoProjetoDTO;
+import com.fabrica_de_software.dtos.SolicitacaoProjetoRequestDto;
 import com.fabrica_de_software.dtos.StatusProjetoDTO;
 import com.fabrica_de_software.enums.StatusProjeto;
 import com.fabrica_de_software.services.ProjetoService;
@@ -30,22 +33,23 @@ public class ProjetoController {
 	}
 
 	@PostMapping("/envio")
-	public ResponseEntity<MensagemDTO> solicitarProjeto(@Valid @RequestBody SolicitacaoProjetoDTO dto,
+	public ResponseEntity<MensagemResponseDto> solicitarProjeto(@Valid @RequestBody SolicitacaoProjetoRequestDto dto,
 			@RequestHeader("Authorization") String token) {
-		MensagemDTO data = projetoService.solicitarProjeto(dto, token);
+		MensagemResponseDto data = projetoService.solicitarProjeto(dto, token);
 		return ResponseEntity.ok(data);
 
 	}
 
 	@GetMapping("/lista")
-	public ResponseEntity<List<ProjetoDTO>> listarProjetos(@RequestParam StatusProjeto status) {
-		List<ProjetoDTO> projetos = projetoService.listarProjetos(status);
+	public ResponseEntity<List<ProjetoResponseDto>> listarProjetos(@RequestParam StatusProjeto status) {
+		List<ProjetoResponseDto> projetos = projetoService.listarProjetos(status);
 		return ResponseEntity.ok(projetos);
 	}
 
 	@GetMapping("/professor")
-	public ResponseEntity<List<ProjetoDTO>> listarProjetosProfessor(@RequestHeader("Authorization") String token) {
-		List<ProjetoDTO> projetos = projetoService.listarProjetosProfessor(token);
+	public ResponseEntity<List<ProjetoResponseDto>> listarProjetosProfessor(
+			@RequestHeader("Authorization") String token) {
+		List<ProjetoResponseDto> projetos = projetoService.listarProjetosProfessor(token);
 		return ResponseEntity.ok(projetos);
 	}
 

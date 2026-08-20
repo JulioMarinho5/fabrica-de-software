@@ -1,4 +1,4 @@
-package com.fabrica_de_software.controleradvicer;
+package com.fabrica_de_software.exceptions;
 
 import java.util.Map;
 
@@ -8,16 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import com.fabrica_de_software.exceptions.AlunoJaCadastradoEmGrupoException;
-import com.fabrica_de_software.exceptions.AlunoJaCadastradoException;
-import com.fabrica_de_software.exceptions.AlunoNaoEncontradoException;
-import com.fabrica_de_software.exceptions.GithubUrlJaExistenteException;
-import com.fabrica_de_software.exceptions.LinkedinUrlJaExistenteException;
-import com.fabrica_de_software.exceptions.ProfessorJaCadastradoException;
-import com.fabrica_de_software.exceptions.ProfessorNaoEncontradoException;
-import com.fabrica_de_software.exceptions.ProjetoNaoEncontradoException;
-import com.fabrica_de_software.exceptions.SenhaIncorretaException;
-import com.fabrica_de_software.exceptions.TransacaoInvalidaException;
 
 
 @RestControllerAdvice

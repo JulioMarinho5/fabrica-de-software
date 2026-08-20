@@ -3,9 +3,8 @@ package com.fabrica_de_software.services;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-
-import com.fabrica_de_software.dtos.AlunoDTO;
-import com.fabrica_de_software.dtos.EmailDTO;
+import com.fabrica_de_software.dtos.AlunoResponseDto;
+import com.fabrica_de_software.dtos.EmailDto;
 
 @Service
 public class EmailService implements Notificador {
@@ -75,17 +74,17 @@ public class EmailService implements Notificador {
 	}
 
 	@Override
-	public void enviarEmailCadastro(EmailDTO dto) {
+	public void enviarEmailCadastro(EmailDto dto) {
 		SimpleMailMessage mail = new SimpleMailMessage();
-		mail.setTo(dto.getEmail());
+		mail.setTo(dto.email());
 		mail.setSubject("🎉 CADASTRO REALIZADO COM SUCESSO!");
 		StringBuilder sb = new StringBuilder();
-		sb.append("Caro ").append(dto.getEmail()).append(",\n\n");
+		sb.append("Caro ").append(dto.email()).append(",\n\n");
 		sb.append("Seja bem-vindo! Seu cadastro na Fábrica de Software foi realizado com sucesso.\n\n");
 		sb.append("Suas credenciais de acesso:\n");
 		sb.append("-------------------------------------------\n");
-		sb.append("LOGIN: ").append(dto.getEmail()).append("\n");
-		sb.append("SENHA: ").append(dto.getRa()).append(" (Seu RA)\n");
+		sb.append("LOGIN: ").append(dto.email()).append("\n");
+		sb.append("SENHA: ").append(dto.ra()).append(" (Seu RA)\n");
 		sb.append("-------------------------------------------\n\n");
 		sb.append("Dica: Recomendamos trocar sua senha após o primeiro acesso.\n\n");
 		sb.append("Att,\n");
@@ -95,16 +94,16 @@ public class EmailService implements Notificador {
 	}
 
 	@Override
-	public void enviarEmailNovoGrupo(EmailDTO dto) {
+	public void enviarEmailNovoGrupo(EmailDto dto) {
 		SimpleMailMessage mail = new SimpleMailMessage();
-		mail.setTo(dto.getEmail());
+		mail.setTo(dto.email());
 		mail.setSubject("NOVO GRUPO DE PROJETO FORMADO!");
 		StringBuilder sb = new StringBuilder();
-		sb.append("Caro " + dto.getEmail() + ", um novo grupo foi vinculado ao seu projeto.\n\n");
+		sb.append("Caro " + dto.email() + ", um novo grupo foi vinculado ao seu projeto.\n\n");
 		sb.append("Abaixo estão os dados dos alunos integrantes:\n");
 		sb.append("-------------------------------------------\n");
 
-		for (AlunoDTO aluno : dto.getAlunos()) {
+		for (AlunoResponseDto aluno : dto.alunos()) {
 			sb.append("Nome: ").append(aluno.getNome()).append("\n");
 			sb.append("Email: ").append(aluno.getEmail()).append("\n");
 			sb.append("Telefone: ").append(aluno.getTelefone()).append("\n");

@@ -1,7 +1,7 @@
 package com.fabrica_de_software.config;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -26,7 +26,8 @@ public class UserDetailsImpl implements UserDetails {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return List.of(new SimpleGrantedAuthority(null));
+		return usuario.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getRole()))
+				.collect(Collectors.toList());
 	}
 
 	@Override

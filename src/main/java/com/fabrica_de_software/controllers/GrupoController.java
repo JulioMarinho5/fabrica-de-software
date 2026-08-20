@@ -10,8 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fabrica_de_software.dtos.CadastroGrupoDTO;
+import com.fabrica_de_software.dtos.CadastroGrupoRequestDto;
 import com.fabrica_de_software.dtos.GrupoDTO;
+import com.fabrica_de_software.dtos.GrupoResponseDto;
 import com.fabrica_de_software.dtos.MensagemDTO;
+import com.fabrica_de_software.dtos.MensagemResponseDto;
 import com.fabrica_de_software.services.GrupoService;
 
 import jakarta.validation.Valid;
@@ -27,14 +30,14 @@ public class GrupoController {
 	}
 
 	@PostMapping("/novo-grupo")
-	public ResponseEntity<MensagemDTO> criarNovoGrupo(@Valid @RequestBody CadastroGrupoDTO dto) {
-		MensagemDTO data = grupoService.criarNovoGrupo(dto);
+	public ResponseEntity<MensagemResponseDto> criarNovoGrupo(@Valid @RequestBody CadastroGrupoRequestDto dto) {
+		MensagemResponseDto data = grupoService.criarNovoGrupo(dto);
 		return ResponseEntity.ok(data);
 	}
 
 	@GetMapping("/lista")
-	public ResponseEntity<List<GrupoDTO>> listarGrupos() {
-		List<GrupoDTO> lista = grupoService.listarGrupos();
+	public ResponseEntity<List<GrupoResponseDto>> listarGrupos() {
+		List<GrupoResponseDto> lista = grupoService.listarGrupos();
 		return ResponseEntity.ok(lista);
 	}
 
