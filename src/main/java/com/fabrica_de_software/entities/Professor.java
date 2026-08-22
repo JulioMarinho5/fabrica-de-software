@@ -21,8 +21,6 @@ public class Professor {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	@Column(nullable = false, unique = true, columnDefinition = "CHAR(5)")
-	private String ra;
 	@Column(nullable = false, length = 150)
 	private String escola;
 	@Column(nullable = false, name = "data_cadastro")
@@ -37,8 +35,7 @@ public class Professor {
 	public Professor() {
 	}
 
-	public Professor(String ra, String escola, LocalDate dataCadastro, Usuario usuario, Status status) {
-		this.ra = ra;
+	public Professor(String escola, LocalDate dataCadastro, Usuario usuario, Status status) {
 		this.escola = escola;
 		this.dataCadastro = dataCadastro;
 		this.usuario = usuario;
@@ -51,14 +48,6 @@ public class Professor {
 
 	public void setId(long id) {
 		this.id = id;
-	}
-
-	public String getRa() {
-		return ra;
-	}
-
-	public void setRa(String ra) {
-		this.ra = ra;
 	}
 
 	public String getEscola() {

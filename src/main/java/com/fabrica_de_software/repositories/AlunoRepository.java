@@ -10,8 +10,6 @@ import com.fabrica_de_software.entities.Aluno;
 public interface AlunoRepository extends JpaRepository<Aluno, Long> {
 	Optional<Aluno> findByEmail(String email);
 
-	boolean existsByRa(String ra);
-
 	List<Aluno> findByGrupoIdIsNull();
 
 	List<Aluno> findByGrupoId(long grupoId);

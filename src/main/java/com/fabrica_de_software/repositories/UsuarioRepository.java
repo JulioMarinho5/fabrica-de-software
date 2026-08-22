@@ -9,4 +9,6 @@ import com.fabrica_de_software.entities.Usuario;
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 	Optional<Usuario> findByEmail(String email);
 
+	boolean existsByRa(String ra);
+
 }

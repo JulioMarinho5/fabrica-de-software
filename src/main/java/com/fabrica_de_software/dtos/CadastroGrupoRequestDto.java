@@ -11,4 +11,9 @@ public record CadastroGrupoRequestDto(@NotNull(message = "O ID do projeto é obr
 		@NotBlank(message = "O email do professor coordenador é obrigatório") @Email(message = "Email inválido") String professorCoordenadorEmail,
 
 		List<Long> alunosIds) {
+
+	public CadastroGrupoRequestDto {
+		professorCoordenadorEmail = professorCoordenadorEmail == null ? null
+				: professorCoordenadorEmail.toLowerCase().trim();
+	}
 }

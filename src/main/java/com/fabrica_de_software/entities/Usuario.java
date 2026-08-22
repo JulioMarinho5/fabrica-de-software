@@ -1,7 +1,7 @@
 package com.fabrica_de_software.entities;
 
+import java.util.ArrayList;
 import java.util.List;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,20 +26,21 @@ public class Usuario {
 	private String nome;
 	@Column(nullable = false, unique = true, columnDefinition = "CHAR(11)")
 	private String telefone;
+	@Column(nullable = false, unique = true, columnDefinition = "CHAR(6)")
+	private String ra;
 	@ManyToMany
 	@JoinTable(name = "usuarios_roles", joinColumns = @JoinColumn(name = "usuario_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-	private List<Role> roles;
+	private List<Role> roles = new ArrayList<>();
 
 	public Usuario() {
 	}
 
-	public Usuario(String email, String senha, String nome, String telefone, List<Role> roles) {
-		super();
+	public Usuario(String email, String senha, String nome, String telefone, String ra) {
 		this.email = email;
 		this.senha = senha;
 		this.nome = nome;
 		this.telefone = telefone;
-		this.roles = roles;
+		this.ra = ra;
 	}
 
 	public long getId() {
@@ -80,6 +81,14 @@ public class Usuario {
 
 	public void setTelefone(String telefone) {
 		this.telefone = telefone;
+	}
+
+	public String getRa() {
+		return ra;
+	}
+
+	public void setRa(String ra) {
+		this.ra = ra;
 	}
 
 	public List<Role> getRoles() {

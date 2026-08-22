@@ -7,6 +7,8 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import com.fabrica_de_software.dtos.AlunoResponseDto;
 import com.fabrica_de_software.dtos.CadastroAlunoRequestDto;
+import com.fabrica_de_software.dtos.LoginRequestDto;
+import com.fabrica_de_software.dtos.LoginResponseDto;
 import com.fabrica_de_software.dtos.MensagemResponseDto;
 import com.fabrica_de_software.entities.Aluno;
 import com.fabrica_de_software.enums.Status;
@@ -51,6 +53,10 @@ public class AlunoService {
 				dto.dataSelecao(), LocalDate.now(), null, Status.ATIVO);
 		alunoRepository.save(aluno);
 		return new MensagemResponseDto("Aluno cadastrado com sucesso!", LocalDateTime.now());
+	}
+
+	public LoginResponseDto loginAluno(LoginRequestDto dto) {
+
 	}
 
 	public List<AlunoResponseDto> listarAlunosDisponiveis() {

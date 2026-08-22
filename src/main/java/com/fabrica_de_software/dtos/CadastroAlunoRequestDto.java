@@ -28,4 +28,8 @@ public record CadastroAlunoRequestDto(
 		@Size(max = 255, message = "A URL do GitHub deve ter no máximo 255 caracteres") String githubUrl,
 
 		@Size(max = 255, message = "A URL do LinkedIn deve ter no máximo 255 caracteres") String linkedinUrl) {
+
+	public CadastroAlunoRequestDto {
+		email = email == null ? null : email.toLowerCase().trim();
+	}
 }

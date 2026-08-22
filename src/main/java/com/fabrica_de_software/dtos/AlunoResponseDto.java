@@ -16,7 +16,7 @@ public class AlunoResponseDto {
 	public AlunoResponseDto(Aluno aluno, Usuario usuario) {
 		this.id = aluno.getId();
 		this.nome = usuario.getNome();
-		this.ra = aluno.getRa();
+		this.ra = usuario.getRa();
 		this.telefone = usuario.getTelefone();
 		this.email = usuario.getEmail();
 	}

@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public record CadastroProfessorRequestDto(
+public record CadastroAdministradorRequestDto(
 		@NotBlank(message = "O nome é obrigatório") @Size(max = 150, message = "O nome deve ter no máximo 150 caracteres") String nome,
 
 		@NotBlank(message = "O email é obrigatório") @Email(message = "Email inválido") @Size(max = 150, message = "O email deve ter no máximo 150 caracteres") String email,
@@ -13,7 +13,8 @@ public record CadastroProfessorRequestDto(
 
 		@NotBlank(message = "A escola é obrigatória") @Size(max = 150, message = "A escola deve ter no máximo 150 caracteres") String escola) {
 
-	public CadastroProfessorRequestDto {
+	public CadastroAdministradorRequestDto {
 		email = email == null ? null : email.toLowerCase().trim();
 	}
+
 }

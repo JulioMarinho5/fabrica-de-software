@@ -26,8 +26,6 @@ public class Aluno {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	@Column(nullable = false, unique = true, columnDefinition = "CHAR(6)")
-	private String ra;
 	@Column(nullable = false, length = 150)
 	private String curso;
 	@Column(nullable = false, length = 10)
@@ -62,9 +60,8 @@ public class Aluno {
 	public Aluno() {
 	}
 
-	public Aluno(String ra, String curso, Turno turno, int horasSemanais, String githubUrl, String linkedinUrl,
+	public Aluno(String curso, Turno turno, int horasSemanais, String githubUrl, String linkedinUrl,
 			LocalDate dataSelecao, LocalDate dataCadastro, Grupo grupo, Status status, Usuario usuario) {
-		this.ra = ra;
 		this.curso = curso;
 		this.turno = turno;
 		this.horasSemanais = horasSemanais;
@@ -83,14 +80,6 @@ public class Aluno {
 
 	public void setId(long id) {
 		this.id = id;
-	}
-
-	public String getRa() {
-		return ra;
-	}
-
-	public void setRa(String ra) {
-		this.ra = ra;
 	}
 
 	public String getCurso() {

@@ -3,6 +3,7 @@ package com.fabrica_de_software.controllers;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,13 +12,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.fabrica_de_software.dtos.MensagemDTO;
 import com.fabrica_de_software.dtos.MensagemResponseDto;
-import com.fabrica_de_software.dtos.ProjetoDTO;
 import com.fabrica_de_software.dtos.ProjetoResponseDto;
-import com.fabrica_de_software.dtos.SolicitacaoProjetoDTO;
 import com.fabrica_de_software.dtos.SolicitacaoProjetoRequestDto;
-import com.fabrica_de_software.dtos.StatusProjetoDTO;
+import com.fabrica_de_software.dtos.StatusProjetoRequestDto;
 import com.fabrica_de_software.enums.StatusProjeto;
 import com.fabrica_de_software.services.ProjetoService;
 
@@ -33,6 +31,7 @@ public class ProjetoController {
 	}
 
 	@PostMapping("/envio")
+	@PreAuthorize("HasRole('PROFESSOR')")
 	public ResponseEntity<MensagemResponseDto> solicitarProjeto(@Valid @RequestBody SolicitacaoProjetoRequestDto dto,
 			@RequestHeader("Authorization") String token) {
 		MensagemResponseDto data = projetoService.solicitarProjeto(dto, token);
@@ -41,12 +40,14 @@ public class ProjetoController {
 	}
 
 	@GetMapping("/lista")
+	@PreAuthorize("HasRole('ADMIN')")
 	public ResponseEntity<List<ProjetoResponseDto>> listarProjetos(@RequestParam StatusProjeto status) {
 		List<ProjetoResponseDto> projetos = projetoService.listarProjetos(status);
 		return ResponseEntity.ok(projetos);
 	}
 
 	@GetMapping("/professor")
+	@PreAuthorize("HasRole('PROFESSOR')")
 	public ResponseEntity<List<ProjetoResponseDto>> listarProjetosProfessor(
 			@RequestHeader("Authorization") String token) {
 		List<ProjetoResponseDto> projetos = projetoService.listarProjetosProfessor(token);
@@ -54,8 +55,9 @@ public class ProjetoController {
 	}
 
 	@PatchMapping("/status")
-	public ResponseEntity<MensagemDTO> atualizarStatus(@RequestBody StatusProjetoDTO dto) {
-		MensagemDTO data = projetoService.atualizarStatus(dto);
+	@PreAuthorize("HasRole('ADMIN')")
+	public ResponseEntity<MensagemResponseDto> atualizarStatus(@RequestBody StatusProjetoRequestDto dto) {
+		MensagemResponseDto data = projetoService.atualizarStatus(dto);
 		return ResponseEntity.ok(data);
 	}
 
