@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.fabrica_de_software.dtos.CadastroProfessorRequestDto;
@@ -18,20 +20,27 @@ import com.fabrica_de_software.exceptions.ProfessorNaoEncontradoException;
 import com.fabrica_de_software.exceptions.SenhaIncorretaException;
 import com.fabrica_de_software.notificacoes.ProfessorProducer;
 import com.fabrica_de_software.repositories.ProfessorRepository;
+import com.fabrica_de_software.repositories.RoleRepository;
+import com.fabrica_de_software.repositories.UsuarioRepository;
 
 @Service
 public class ProfessorService {
 	private ProfessorRepository professorRepository;
-	private GeradorDeRaService geradorRa;
 	private ProfessorProducer professorProducer;
-	private PasswordEncoder passwordEncoder;
-	private JwtService jwtService;
+	private final UsuarioRepository usuarioRepository;
+	private final RoleRepository roleRepository;
+	private final AuthenticationManager authenticationManager;
+	private final PasswordEncoder passwordEncoder;
+	private final JwtService jwtService;
 
-	public ProfessorService(ProfessorRepository professorRepository, GeradorDeRaService geradorRa,
-			ProfessorProducer professorProducer, PasswordEncoder passwordEncoder, JwtService jwtService) {
+	public ProfessorService(ProfessorRepository professorRepository, ProfessorProducer professorProducer,
+			UsuarioRepository usuarioRepository, RoleRepository roleRepository,
+			AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, JwtService jwtService) {
 		this.professorRepository = professorRepository;
-		this.geradorRa = geradorRa;
 		this.professorProducer = professorProducer;
+		this.usuarioRepository = usuarioRepository;
+		this.roleRepository = roleRepository;
+		this.authenticationManager = authenticationManager;
 		this.passwordEncoder = passwordEncoder;
 		this.jwtService = jwtService;
 	}
@@ -70,7 +79,7 @@ public class ProfessorService {
 	}
 
 	public List<ProfessorResponseDto> listarProfessores() {
-		return professorRepository.findAll().stream().map(p -> new ProfessorResponseDto(p)).toList();
+		return professorRepository.findAll().stream().map(p -> new ProfessorResponseDto(p, p.getUsuario())).toList();
 	}
 
 }

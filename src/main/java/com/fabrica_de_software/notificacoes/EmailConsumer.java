@@ -14,7 +14,7 @@ public class EmailConsumer {
 		this.emailService = emailService;
 	}
 
-	@RabbitListener(queues = "fila.email")
+	@RabbitListener(queues = "fila.email.professor")
 	public void processarFilaEmail(EmailDto dto) {
 		switch (dto.tipoEvento()) {
 		case "ANALISE" -> emailService.enviarEmailEmAnalise(dto.email());

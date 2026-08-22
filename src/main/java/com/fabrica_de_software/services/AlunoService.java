@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.fabrica_de_software.dtos.AlunoResponseDto;
 import com.fabrica_de_software.dtos.CadastroAlunoRequestDto;
@@ -16,15 +19,29 @@ import com.fabrica_de_software.exceptions.AlunoJaCadastradoException;
 import com.fabrica_de_software.exceptions.GithubUrlJaExistenteException;
 import com.fabrica_de_software.exceptions.LinkedinUrlJaExistenteException;
 import com.fabrica_de_software.repositories.AlunoRepository;
+import com.fabrica_de_software.repositories.RoleRepository;
+import com.fabrica_de_software.repositories.UsuarioRepository;
 
 @Service
 public class AlunoService {
 	private AlunoRepository alunoRepository;
 	private GeradorDeRaService geradorRa;
+	private final UsuarioRepository usuarioRepository;
+	private final RoleRepository roleRepository;
+	private final AuthenticationManager authenticationManager;
+	private final PasswordEncoder passwordEncoder;
+	private final JwtService jwtService;
 
-	public AlunoService(AlunoRepository alunoRepository, GeradorDeRaService geradorRa) {
+	public AlunoService(AlunoRepository alunoRepository, GeradorDeRaService geradorRa,
+			UsuarioRepository usuarioRepository, RoleRepository roleRepository,
+			AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, JwtService jwtService) {
 		this.alunoRepository = alunoRepository;
 		this.geradorRa = geradorRa;
+		this.usuarioRepository = usuarioRepository;
+		this.roleRepository = roleRepository;
+		this.authenticationManager = authenticationManager;
+		this.passwordEncoder = passwordEncoder;
+		this.jwtService = jwtService;
 	}
 
 	public MensagemResponseDto cadastrarAluno(CadastroAlunoRequestDto dto) {

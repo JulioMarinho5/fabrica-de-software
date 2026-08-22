@@ -17,23 +17,24 @@ public class ProfessorProducer {
 	}
 
 	public void enviarEmailEmAnalise(String emailProfessor) {
-		rabbitTemplate.convertAndSend("fila.email", new EmailDto(emailProfessor, null, "ANALISE", null));
+		rabbitTemplate.convertAndSend("fila.email.professor", new EmailDto(emailProfessor, null, "ANALISE", null));
 	}
 
 	public void enviarEmailAprovacao(String emailProfessor) {
-		rabbitTemplate.convertAndSend("fila.email", new EmailDto(emailProfessor, null, "APROVACAO", null));
+		rabbitTemplate.convertAndSend("fila.email.professor", new EmailDto(emailProfessor, null, "APROVACAO", null));
 	}
 
 	public void enviarEmailCancelamento(String emailProfessor) {
-		rabbitTemplate.convertAndSend("fila.email", new EmailDto(emailProfessor, null, "CANCELAMENTO", null));
+		rabbitTemplate.convertAndSend("fila.email.professor", new EmailDto(emailProfessor, null, "CANCELAMENTO", null));
 	}
 
 	public void enviarEmailCadastro(String emailProfessor, String ra) {
-		rabbitTemplate.convertAndSend("fila.email", new EmailDto(emailProfessor, ra, "CADASTRO", null));
+		rabbitTemplate.convertAndSend("fila.email.professor", new EmailDto(emailProfessor, ra, "CADASTRO", null));
 	}
 
 	public void enviarEmailGrupo(String emailProfessor, List<AlunoResponseDto> alunos) {
-		rabbitTemplate.convertAndSend("fila.email", new EmailDto(emailProfessor, null, "GRUPO_CRIADO", alunos));
+		rabbitTemplate.convertAndSend("fila.email.professor",
+				new EmailDto(emailProfessor, null, "GRUPO_CRIADO", alunos));
 	}
 
 }
