@@ -8,7 +8,7 @@ import com.fabrica_de_software.dtos.EmailDto;
 
 @Service
 public class EmailService implements Notificador {
-	private JavaMailSender javaMailSender;
+	private final JavaMailSender javaMailSender;
 
 	public EmailService(JavaMailSender javaMailSender) {
 		this.javaMailSender = javaMailSender;

@@ -4,18 +4,20 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.fabrica_de_software.dtos.MensagemResponseDto;
 import com.fabrica_de_software.dtos.ProjetoResponseDto;
 import com.fabrica_de_software.dtos.SolicitacaoProjetoRequestDto;
 import com.fabrica_de_software.dtos.StatusProjetoRequestDto;
+import com.fabrica_de_software.entities.Usuario;
 import com.fabrica_de_software.enums.StatusProjeto;
 import com.fabrica_de_software.services.ProjetoService;
 
@@ -33,8 +35,8 @@ public class ProjetoController {
 	@PostMapping("/envio")
 	@PreAuthorize("HasRole('PROFESSOR')")
 	public ResponseEntity<MensagemResponseDto> solicitarProjeto(@Valid @RequestBody SolicitacaoProjetoRequestDto dto,
-			@RequestHeader("Authorization") String token) {
-		MensagemResponseDto data = projetoService.solicitarProjeto(dto, token);
+			@AuthenticationPrincipal(expression = "usuario") Usuario usuario) {
+		MensagemResponseDto data = projetoService.solicitarProjeto(dto, usuario);
 		return ResponseEntity.ok(data);
 
 	}
@@ -49,8 +51,8 @@ public class ProjetoController {
 	@GetMapping("/professor")
 	@PreAuthorize("HasRole('PROFESSOR')")
 	public ResponseEntity<List<ProjetoResponseDto>> listarProjetosProfessor(
-			@RequestHeader("Authorization") String token) {
-		List<ProjetoResponseDto> projetos = projetoService.listarProjetosProfessor(token);
+			@AuthenticationPrincipal(expression = "usuario") Usuario usuario) {
+		List<ProjetoResponseDto> projetos = projetoService.listarProjetosProfessor(usuario);
 		return ResponseEntity.ok(projetos);
 	}
 

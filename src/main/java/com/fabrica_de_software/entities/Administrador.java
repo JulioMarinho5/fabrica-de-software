@@ -27,11 +27,9 @@ public class Administrador {
 	private Status status;
 
 	public Administrador() {
-		super();
 	}
 
 	public Administrador(Usuario usuario, Status status) {
-		super();
 		this.usuario = usuario;
 		this.status = status;
 	}

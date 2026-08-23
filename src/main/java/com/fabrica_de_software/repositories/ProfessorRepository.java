@@ -8,4 +8,6 @@ import com.fabrica_de_software.entities.Professor;
 
 public interface ProfessorRepository extends JpaRepository<Professor, Long> {
 	Optional<Professor> findByEmail(String Email);
+
+	Optional<Professor> findByUsuarioId(long usuarioId);
 }

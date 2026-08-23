@@ -42,7 +42,6 @@ public class Grupo {
 	}
 
 	public Grupo(Projeto projeto, Professor professor, LocalDate dataCriacao, Status status) {
-		super();
 		this.projeto = projeto;
 		this.professor = professor;
 		this.dataCriacao = dataCriacao;

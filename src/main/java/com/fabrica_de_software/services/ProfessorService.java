@@ -6,36 +6,46 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.fabrica_de_software.config.UserDetailsImpl;
 import com.fabrica_de_software.dtos.CadastroProfessorRequestDto;
 import com.fabrica_de_software.dtos.LoginRequestDto;
 import com.fabrica_de_software.dtos.LoginResponseDto;
 import com.fabrica_de_software.dtos.MensagemResponseDto;
 import com.fabrica_de_software.dtos.ProfessorResponseDto;
 import com.fabrica_de_software.entities.Professor;
+import com.fabrica_de_software.entities.Role;
+import com.fabrica_de_software.entities.Usuario;
+import com.fabrica_de_software.enums.RoleEnum;
 import com.fabrica_de_software.enums.Status;
 import com.fabrica_de_software.exceptions.ProfessorJaCadastradoException;
-import com.fabrica_de_software.exceptions.ProfessorNaoEncontradoException;
-import com.fabrica_de_software.exceptions.SenhaIncorretaException;
+import com.fabrica_de_software.exceptions.RoleNaoEncontradoException;
 import com.fabrica_de_software.notificacoes.ProfessorProducer;
 import com.fabrica_de_software.repositories.ProfessorRepository;
 import com.fabrica_de_software.repositories.RoleRepository;
 import com.fabrica_de_software.repositories.UsuarioRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class ProfessorService {
-	private ProfessorRepository professorRepository;
-	private ProfessorProducer professorProducer;
+	private final ProfessorRepository professorRepository;
+	private final ProfessorProducer professorProducer;
 	private final UsuarioRepository usuarioRepository;
 	private final RoleRepository roleRepository;
 	private final AuthenticationManager authenticationManager;
 	private final PasswordEncoder passwordEncoder;
 	private final JwtService jwtService;
+	private final GeradorDeRaService geradorRa;
 
 	public ProfessorService(ProfessorRepository professorRepository, ProfessorProducer professorProducer,
 			UsuarioRepository usuarioRepository, RoleRepository roleRepository,
-			AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, JwtService jwtService) {
+			AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, JwtService jwtService,
+			GeradorDeRaService geradorRa) {
 		this.professorRepository = professorRepository;
 		this.professorProducer = professorProducer;
 		this.usuarioRepository = usuarioRepository;
@@ -43,39 +53,49 @@ public class ProfessorService {
 		this.authenticationManager = authenticationManager;
 		this.passwordEncoder = passwordEncoder;
 		this.jwtService = jwtService;
+		this.geradorRa = geradorRa;
 	}
 
+	@Transactional
 	public MensagemResponseDto cadastrarProfessor(CadastroProfessorRequestDto dto) {
-		Optional<Professor> op = professorRepository.findByEmail(dto.email().toLowerCase());
-		if (op.isPresent()) {
-			throw new ProfessorJaCadastradoException("Um Professor com esse Email já está cadastrado");
-		}
-		boolean isOk = false;
+		Optional<Usuario> opUsuario = usuarioRepository.findByEmail(dto.email());
+		Role roleNovoProf = roleRepository.findByRole(RoleEnum.ROLE_PROFESSOR)
+				.orElseThrow(() -> new RoleNaoEncontradoException("Role não encontrado na base de dados"));
 		String ra = null;
-		while (!isOk) {
-			ra = geradorRa.gerarRaProfessor();
-			if (professorRepository.existsByRa(ra)) {
-				isOk = false;
-			} else {
-				isOk = true;
+		if (opUsuario.isEmpty()) {
+			boolean raOk = false;
+			while (!raOk) {
+				ra = geradorRa.gerarRa();
+				raOk = usuarioRepository.existsByRa(ra) ? false : true;
 			}
+			Usuario u = new Usuario(dto.email(), passwordEncoder.encode(ra), dto.nome(), dto.telefone(), ra);
+			u.setRoles(List.of(roleNovoProf));
+			Usuario usuario = usuarioRepository.save(u);
+			Professor professor = new Professor(dto.escola(), LocalDate.now(), usuario, Status.ATIVO);
+			professorRepository.save(professor);
+		} else {
+			Optional<Professor> opAdm = professorRepository.findByEmail(dto.email());
+			if (opAdm.isPresent()) {
+				throw new ProfessorJaCadastradoException("Professor já cadastrado!");
+			}
+			Usuario usuario = opUsuario.get();
+			usuario.getRoles().add(roleNovoProf);
+			usuarioRepository.save(usuario);
+			Professor professor = new Professor(dto.escola(), LocalDate.now(), usuario, Status.ATIVO);
+			professorRepository.save(professor);
 		}
-		Professor professor = new Professor(ra, dto.nome(), dto.email().toLowerCase(), dto.telefone(), dto.escola(),
-				LocalDate.now(), Status.ATIVO, passwordEncoder.encode(ra));
-		professorRepository.save(professor);
-		professorProducer.enviarEmailCadastro(professor.getEmail(), ra);
+		professorProducer.enviarEmailCadastro(dto.email(), ra);
 		return new MensagemResponseDto("Professor cadastrado com sucesso!", LocalDateTime.now());
 
 	}
 
 	public LoginResponseDto loginProfessor(LoginRequestDto dto) {
-		return professorRepository.findByEmail(dto.email().toLowerCase()).map(p -> {
-			if (!passwordEncoder.matches(dto.getSenha(), p.getSenha())) {
-				throw new SenhaIncorretaException("Senha incorreta! Tente novamente");
-			}
-			String token = jwtService.gerarToken(p);
-			return new LoginResponseDto(token, p.getNome(), p.getEmail(), p.getTelefone());
-		}).orElseThrow(() -> new ProfessorNaoEncontradoException("Professor não encontrado!"));
+		Authentication auth = authenticationManager
+				.authenticate(new UsernamePasswordAuthenticationToken(dto.email(), dto.senha()));
+		UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
+		Usuario usuario = userDetails.getUsuario();
+		return new LoginResponseDto(jwtService.gerarToken(userDetails), usuario.getNome(), usuario.getEmail(),
+				usuario.getTelefone(), usuario.getRa());
 	}
 
 	public List<ProfessorResponseDto> listarProfessores() {

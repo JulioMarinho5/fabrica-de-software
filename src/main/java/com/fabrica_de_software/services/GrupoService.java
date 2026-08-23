@@ -29,11 +29,11 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class GrupoService {
-	private GrupoRepository grupoRepository;
-	private ProjetoRepository projetoRepository;
-	private ProfessorRepository professorRepository;
-	private AlunoRepository alunoRepository;
-	private ProfessorProducer professorProducer;
+	private final GrupoRepository grupoRepository;
+	private final ProjetoRepository projetoRepository;
+	private final ProfessorRepository professorRepository;
+	private final AlunoRepository alunoRepository;
+	private final ProfessorProducer professorProducer;
 
 	public GrupoService(GrupoRepository grupoRepository, ProjetoRepository projetoRepository,
 			ProfessorRepository professorRepository, AlunoRepository alunoRepository,
@@ -56,19 +56,20 @@ public class GrupoService {
 		}
 		for (Aluno a : alunosDoGrupo) {
 			if (a.getGrupo() != null) {
-				throw new AlunoJaCadastradoEmGrupoException("O aluno " + a.getNome() + " já faz parte de outro grupo!");
+				throw new AlunoJaCadastradoEmGrupoException(
+						"O aluno " + a.getUsuario().getNome() + " já faz parte de outro grupo!");
 			}
 		}
-		Grupo grupo = new Grupo(projeto, professor, LocalDate.now(), Status.ATIVO);
-		grupoRepository.save(grupo);
+		Grupo g = new Grupo(projeto, professor, LocalDate.now(), Status.ATIVO);
+		Grupo grupo = grupoRepository.save(g);
 		for (Aluno a : alunosDoGrupo) {
 			a.setGrupo(grupo);
 		}
 		alunoRepository.saveAll(alunosDoGrupo);
 		projeto.setTemGrupo(true);
 		projetoRepository.save(projeto);
-		professorProducer.enviarEmailGrupo(professor.getEmail(),
-				alunosDoGrupo.stream().map(a -> new AlunoResponseDto(a)).toList());
+		professorProducer.enviarEmailGrupo(professor.getUsuario().getEmail(),
+				alunosDoGrupo.stream().map(a -> new AlunoResponseDto(a, a.getUsuario())).toList());
 		return new MensagemResponseDto("Grupo criado com sucesso!", LocalDateTime.now());
 	}
 
@@ -80,10 +81,11 @@ public class GrupoService {
 						.localUtilizacao(g.getProjeto().getLocalUtilizacao())
 						.funcionalidades(g.getProjeto().getFuncionalidades()).demanda(g.getProjeto().getDemanda())
 						.dataInicio(g.getProjeto().getDataInicio())
-						.professorResponsavel(new ProfessorResponseDto(g.getProjeto().getProfessor()))
+						.professorResponsavel(new ProfessorResponseDto(g.getProjeto().getProfessor(),
+								g.getProjeto().getProfessor().getUsuario()))
 						.temGrupo(g.getProjeto().isTemGrupo()).build(),
-				new ProfessorResponseDto(g.getProfessor()), g.getAlunos().stream().map(AlunoResponseDto::new).toList()))
-				.toList();
+				new ProfessorResponseDto(g.getProfessor(), g.getProfessor().getUsuario()),
+				g.getAlunos().stream().map(a -> new AlunoResponseDto(a, a.getUsuario())).toList())).toList();
 	}
 
 }
