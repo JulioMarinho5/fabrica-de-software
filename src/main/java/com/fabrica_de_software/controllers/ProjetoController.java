@@ -33,7 +33,7 @@ public class ProjetoController {
 	}
 
 	@PostMapping("/envio")
-	@PreAuthorize("HasRole('PROFESSOR')")
+	@PreAuthorize("hasRole('PROFESSOR')")
 	public ResponseEntity<MensagemResponseDto> solicitarProjeto(@Valid @RequestBody SolicitacaoProjetoRequestDto dto,
 			@AuthenticationPrincipal(expression = "usuario") Usuario usuario) {
 		MensagemResponseDto data = projetoService.solicitarProjeto(dto, usuario);
@@ -42,14 +42,14 @@ public class ProjetoController {
 	}
 
 	@GetMapping("/lista")
-	@PreAuthorize("HasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<List<ProjetoResponseDto>> listarProjetos(@RequestParam StatusProjeto status) {
 		List<ProjetoResponseDto> projetos = projetoService.listarProjetos(status);
 		return ResponseEntity.ok(projetos);
 	}
 
 	@GetMapping("/professor")
-	@PreAuthorize("HasRole('PROFESSOR')")
+	@PreAuthorize("hasRole('PROFESSOR')")
 	public ResponseEntity<List<ProjetoResponseDto>> listarProjetosProfessor(
 			@AuthenticationPrincipal(expression = "usuario") Usuario usuario) {
 		List<ProjetoResponseDto> projetos = projetoService.listarProjetosProfessor(usuario);
@@ -57,7 +57,7 @@ public class ProjetoController {
 	}
 
 	@PatchMapping("/status")
-	@PreAuthorize("HasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<MensagemResponseDto> atualizarStatus(@RequestBody StatusProjetoRequestDto dto) {
 		MensagemResponseDto data = projetoService.atualizarStatus(dto);
 		return ResponseEntity.ok(data);

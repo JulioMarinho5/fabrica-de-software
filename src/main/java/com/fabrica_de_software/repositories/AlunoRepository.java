@@ -8,7 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.fabrica_de_software.entities.Aluno;
 
 public interface AlunoRepository extends JpaRepository<Aluno, Long> {
-	Optional<Aluno> findByEmail(String email);
+	
+	Optional<Aluno> findByUsuarioId(long usuarioId);
 
 	List<Aluno> findByGrupoIdIsNull();
 

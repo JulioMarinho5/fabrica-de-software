@@ -11,6 +11,8 @@ public interface Notificador {
 
 	public void enviarEmailCadastro(EmailDto dto);
 
-	public void enviarEmailNovoGrupo(EmailDto dto);
+	public void enviarEmailProfessorNovoGrupo(EmailDto dto);
+
+	public void enviarEmailAlunoNovoGrupo(EmailDto dto);
 
 }

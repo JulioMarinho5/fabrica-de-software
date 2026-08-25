@@ -21,7 +21,7 @@ public record CadastroAlunoRequestDto(
 
 		@NotNull(message = "O turno é obrigatório") Turno turno,
 
-		@Min(value = 1, message = "As horas semanais devem ser maiores que zero") int horasSemanais,
+		@NotNull(message = "As horas semanais são obrigatórias") @Min(value = 1, message = "As horas semanais devem ser maiores que zero") Integer horasSemanais,
 
 		@NotNull(message = "A data de seleção é obrigatória") LocalDate dataSelecao,
 
@@ -31,5 +31,7 @@ public record CadastroAlunoRequestDto(
 
 	public CadastroAlunoRequestDto {
 		email = email == null ? null : email.toLowerCase().trim();
+		githubUrl = githubUrl == null ? null : githubUrl.toLowerCase().trim();
+		linkedinUrl = linkedinUrl == null ? null : linkedinUrl.toLowerCase().trim();
 	}
 }

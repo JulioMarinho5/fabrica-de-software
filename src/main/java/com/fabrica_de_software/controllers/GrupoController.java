@@ -26,14 +26,14 @@ public class GrupoController {
 	}
 
 	@PostMapping("/novo-grupo")
-	@PreAuthorize("HasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<MensagemResponseDto> criarNovoGrupo(@Valid @RequestBody CadastroGrupoRequestDto dto) {
 		MensagemResponseDto data = grupoService.criarNovoGrupo(dto);
 		return ResponseEntity.ok(data);
 	}
 
 	@GetMapping("/lista")
-	@PreAuthorize("HasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<List<GrupoResponseDto>> listarGrupos() {
 		List<GrupoResponseDto> lista = grupoService.listarGrupos();
 		return ResponseEntity.ok(lista);

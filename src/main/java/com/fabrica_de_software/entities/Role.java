@@ -1,5 +1,7 @@
 package com.fabrica_de_software.entities;
 
+import com.fabrica_de_software.enums.RoleEnum;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -17,13 +19,9 @@ public class Role {
 	private long id;
 	@Column(nullable = false, unique = true, length = 30)
 	@Enumerated(EnumType.STRING)
-	private String role;
+	private RoleEnum role;
 
 	public Role() {
-	}
-
-	public Role(String role) {
-		this.role = role;
 	}
 
 	public long getId() {
@@ -34,11 +32,11 @@ public class Role {
 		this.id = id;
 	}
 
-	public String getRole() {
+	public RoleEnum getRole() {
 		return role;
 	}
 
-	public void setRole(String role) {
+	public void setRole(RoleEnum role) {
 		this.role = role;
 	}
 

@@ -15,7 +15,17 @@ public class RabbitConfig {
 	}
 
 	@Bean
-	public Queue filaEmail() {
-		return new Queue("fila.email", true); // true = durável
+	public Queue filaEmailProf() {
+		return new Queue("fila.email.professor", true); // true = durável
+	}
+
+	@Bean
+	public Queue filaEmailAdm() {
+		return new Queue("fila.email.adm", true); // true = durável
+	}
+
+	@Bean
+	public Queue filaEmailAluno() {
+		return new Queue("fila.email.aluno", true); // true = durável
 	}
 }

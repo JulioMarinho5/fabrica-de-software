@@ -1,5 +1,8 @@
 package com.fabrica_de_software.exceptions;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,42 +13,32 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+	public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
 		Map<String, String> errors = new HashMap<>();
 		for (FieldError error : ex.getBindingResult().getFieldErrors()) {
 			errors.put(error.getField(), error.getDefaultMessage());
 		}
-
-		Map<String, Object> response = new HashMap<>();
-		response.put("timestamp", LocalDateTime.now());
-		response.put("status", HttpStatus.BAD_REQUEST.value());
-		response.put("error", "Erro de Validação");
-		response.put("messages", errors);
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
 	}
 
 	@ExceptionHandler(AuthenticationException.class)
-	public ResponseEntity<Map<String, Object>> handleAuthenticationException(AuthenticationException ex) {
-		Map<String, Object> response = new HashMap<>();
-		response.put("timestamp", LocalDateTime.now());
-		response.put("status", HttpStatus.UNAUTHORIZED.value());
-		response.put("error", "Não autorizado");
-		response.put("message", "Credenciais inválidas. Verifique seu usuário e senha.");
-
-		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+	public ResponseEntity<Map<String, String>> erroDeAutenticacao(AuthenticationException ex) {
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+				.body(Map.of("erro", "Credenciais inválidas. Verifique seu usuário e senha."));
 	}
 
 	@ExceptionHandler(BadCredentialsException.class)
-	public ResponseEntity<Map<String, String>> badCredentials(BadCredentialsException ex) {
+	public ResponseEntity<Map<String, String>> credenciaisInvalidas(BadCredentialsException ex) {
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("erro", "Usuário ou senha incorretos."));
+	}
+
+	@ExceptionHandler(LoginInvalidoException.class)
+	public ResponseEntity<Map<String, String>> loginInvalido(LoginInvalidoException ex) {
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("erro", ex.getMessage()));
 	}
 
 	@ExceptionHandler(AdministradorJaCadastradoException.class)
@@ -119,8 +112,4 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("erro", ex.getMessage()));
 	}
 
-	@ExceptionHandler(SenhaIncorretaException.class)
-	public ResponseEntity<Map<String, String>> senhaIncorreta(SenhaIncorretaException ex) {
-		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("erro", ex.getMessage()));
-	}
 }

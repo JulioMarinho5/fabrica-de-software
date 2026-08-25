@@ -86,7 +86,6 @@ public class EmailService implements Notificador {
 		sb.append("LOGIN: ").append(dto.email()).append("\n");
 		sb.append("SENHA: ").append(dto.ra()).append(" (Seu RA)\n");
 		sb.append("-------------------------------------------\n\n");
-		sb.append("Dica: Recomendamos trocar sua senha após o primeiro acesso.\n\n");
 		sb.append("Att,\n");
 		sb.append("Fábrica de Software UCSAL");
 		mail.setText(sb.toString());
@@ -94,7 +93,7 @@ public class EmailService implements Notificador {
 	}
 
 	@Override
-	public void enviarEmailNovoGrupo(EmailDto dto) {
+	public void enviarEmailProfessorNovoGrupo(EmailDto dto) {
 		SimpleMailMessage mail = new SimpleMailMessage();
 		mail.setTo(dto.email());
 		mail.setSubject("NOVO GRUPO DE PROJETO FORMADO!");
@@ -113,5 +112,29 @@ public class EmailService implements Notificador {
 		mail.setText(sb.toString());
 		javaMailSender.send(mail);
 	}
+
+	@Override
+	public void enviarEmailAlunoNovoGrupo(EmailDto dto) {
+		SimpleMailMessage mail = new SimpleMailMessage();
+		mail.setTo(dto.email());
+		mail.setSubject("SEU NOVO GRUPO DE PROJETO FOI FORMADO!");
+		StringBuilder sb = new StringBuilder();
+		sb.append("Caro " + dto.email() + ", você foi vinculado a um novo grupo.\n\n");
+		sb.append("Abaixo estão os dados dos alunos integrantes:\n");
+		sb.append("-------------------------------------------\n");
+
+		for (AlunoResponseDto aluno : dto.alunos()) {
+			sb.append("Nome: ").append(aluno.getNome()).append("\n");
+			sb.append("Email: ").append(aluno.getEmail()).append("\n");
+			sb.append("Telefone: ").append(aluno.getTelefone()).append("\n");
+			sb.append("-------------------------------------------\n");
+		}
+		sb.append("\nAtt,\nFábrica de Software UCSAL");
+		mail.setText(sb.toString());
+		javaMailSender.send(mail);
+		
+	}
+	
+	
 
 }

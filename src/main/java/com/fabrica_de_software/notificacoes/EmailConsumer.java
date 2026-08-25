@@ -15,13 +15,27 @@ public class EmailConsumer {
 	}
 
 	@RabbitListener(queues = "fila.email.professor")
-	public void processarFilaEmail(EmailDto dto) {
+	public void processarFilaEmailProfessor(EmailDto dto) {
 		switch (dto.tipoEvento()) {
 		case "ANALISE" -> emailService.enviarEmailEmAnalise(dto.email());
 		case "APROVACAO" -> emailService.enviarEmailAprovacao(dto.email());
 		case "CANCELAMENTO" -> emailService.enviarEmailCancelamento(dto.email());
 		case "CADASTRO" -> emailService.enviarEmailCadastro(dto);
-		case "GRUPO_CRIADO" -> emailService.enviarEmailNovoGrupo(dto);
+		case "GRUPO_CRIADO" -> emailService.enviarEmailProfessorNovoGrupo(dto);
+		default -> System.out.println("Tipo de e-mail desconhecido: " + dto.tipoEvento());
+		}
+	}
+
+	@RabbitListener(queues = "fila.email.adm")
+	public void processarprocessarFilaEmailAdm(EmailDto dto) {
+		emailService.enviarEmailCadastro(dto);
+	}
+
+	@RabbitListener(queues = "fila.email.aluno")
+	public void processarprocessarFilaEmailAluno(EmailDto dto) {
+		switch (dto.tipoEvento()) {
+		case "CADASTRO" -> emailService.enviarEmailCadastro(dto);
+		case "GRUPO_CRIADO" -> emailService.enviarEmailAlunoNovoGrupo(dto);
 		default -> System.out.println("Tipo de e-mail desconhecido: " + dto.tipoEvento());
 		}
 	}

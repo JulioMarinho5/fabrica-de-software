@@ -42,7 +42,7 @@ public class JwtService {
 		return claims.get("user_id", Long.class);
 	}
 
-	public List<Role> getRoles(String token) {
+	public List<String> getRoles(String token) {
 		Claims claims = validarToken(token);
 		return claims.get("roles", List.class);
 	}

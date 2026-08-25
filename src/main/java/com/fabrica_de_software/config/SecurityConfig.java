@@ -1,9 +1,9 @@
 package com.fabrica_de_software.config;
 
 import java.util.Arrays;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -16,11 +16,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 @EnableWebSecurity
 @Configuration
@@ -64,11 +65,20 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.exceptionHandling(c -> c.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
-				.cors(c -> c.configurationSource(corsConfigurationSource())).csrf(AbstractHttpConfigurer::disable)
+		http.exceptionHandling(c -> c.authenticationEntryPoint((request, response, authException) -> {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			response.setContentType("application/json;charset=UTF-8");
+			response.getWriter().write("{\"erro\": \"Não autenticado. Token ausente ou inválido.\"}");
+		}).accessDeniedHandler((request, response, accessDeniedException) -> {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			response.setContentType("application/json;charset=UTF-8");
+			response.getWriter().write("{\"erro\": \"Acesso negado. Você não possui autorização necessária.\"}");
+		})).cors(c -> c.configurationSource(corsConfigurationSource())).csrf(AbstractHttpConfigurer::disable)
 				.sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.authorizeHttpRequests(req -> req.requestMatchers("/auth/**").permitAll().anyRequest().authenticated())
+				.authorizeHttpRequests(
+						req -> req.requestMatchers("/auth/login").permitAll().anyRequest().authenticated())
 				.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
 		return http.build();
 	}
 
