@@ -1,0 +1,62 @@
+package com.fabrica_de_software.config;
+
+import java.util.List;
+
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.fabrica_de_software.entities.Usuario;
+import com.fabrica_de_software.exceptions.UsuarioNaoEncontradoException;
+import com.fabrica_de_software.repositories.UsuarioRepository;
+import com.fabrica_de_software.services.JwtService;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.io.IOException;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+@Component
+public class JwtFilter extends OncePerRequestFilter {
+
+	private final JwtService jwtService;
+	private final UsuarioRepository usuarioRepository;
+
+	public JwtFilter(JwtService jwtService, UsuarioRepository usuarioRepository) {
+		this.jwtService = jwtService;
+		this.usuarioRepository = usuarioRepository;
+	}
+
+	@Override
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+			throws ServletException, IOException, java.io.IOException {
+		String authHeader = request.getHeader("Authorization");
+		if (authHeader != null && authHeader.startsWith("Bearer ")) {
+			String token = authHeader.substring(7);
+			try {
+				Claims claims = jwtService.validarToken(token);
+				Long userId = claims.get("user_id", Long.class);
+				List<String> roles = claims.get("roles", List.class); // List<String>
+				String email = claims.getSubject();
+				Usuario u = usuarioRepository.findByEmail(email)
+						.orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado!"));
+				UserDetailsImpl userDetails = new UserDetailsImpl(u);
+				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+						userDetails, null, roles.stream().map(r -> new SimpleGrantedAuthority(r)).toList());
+				authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+				SecurityContextHolder.getContext().setAuthentication(authentication);
+				request.setAttribute("user_id", userId);
+			} catch (JwtException e) {
+				System.out.println("JWT inválido: " + e.getClass().getSimpleName() + " - " + e.getMessage());
+				SecurityContextHolder.clearContext();
+			}
+		}
+		filterChain.doFilter(request, response);
+	}
+}
